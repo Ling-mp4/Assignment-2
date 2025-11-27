@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package spellingbee.v1;
+option go_package = "Assignmnet-1/api/spellingbee/v1;spellingbeepb";
+
+service GameManager {
+  rpc CreateGame (CreateGameRequest) returns (CreateGameResponse);
+  rpc SubmitWord (SubmitWordRequest) returns (SubmitWordResponse);
+}
+
+ message CreateGameRequest {
+  string kind = 1;
+}
+ message CreateGameResponse {
+  string id = 1;
+  string letters = 2;
+}
+
+ message SubmitWordRequest {
+  string id = 1;
+  string word = 2;
+}
+ message SubmitWordResponse {
+  string message = 1;
+  int32 score = 2;
+  string letters = 3;
+}
