@@ -19,7 +19,7 @@ import (
 func connectPublisherWithRetry() (*mq.Publisher, error) {
 	amqpURL := os.Getenv("RABBITMQ_URL")
 	if amqpURL == "" {
-		amqpURL = "amqp://admin:password@rabbitmq:5672/"
+		amqpURL = "amqp://guest:guest@rabbitmq:5672/"
 	}
 	var pub *mq.Publisher
 	var err error

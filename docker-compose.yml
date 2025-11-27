@@ -1,5 +1,3 @@
-version: "3.8"
-
 networks:
   appnet:
     driver: bridge
@@ -7,9 +5,8 @@ networks:
 services:
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672/
+#    environment:
+#      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -17,7 +14,7 @@ services:
       - appnet
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:15672/"]
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -28,9 +25,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spelling-server
     environment:
-      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672/
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - AMQP_URL=amqp://guest:guest@rabbitmq:5672/
       - STATS_PATH=/app/data/stats.json
       - GRPC_PORT=50051
     ports:
@@ -47,9 +44,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.socket
-    container_name: socket-server
     environment:
-      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672/
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - AMQP_URL=amqp://guest:guest@rabbitmq:5672/
       - STATS_PATH=/app/data/stats.json
       - TCP_ADDR=:9000
     ports:

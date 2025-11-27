@@ -22,8 +22,8 @@ func Connect(amqpURL string) (*Publisher, error) {
 		return nil, err
 	}
 	err = ch.ExchangeDeclare(
-		"Game.events",
-		"Topic",
+		"game.events",
+		"topic",
 		true,
 		false,
 		false,
@@ -48,7 +48,7 @@ func (p *Publisher) Publish(routingKey, message string) {
 			Body:        []byte(message),
 		})
 	if err != nil {
-		log.Printf("Failted to publish message: %v", err)
+		log.Printf("Failed to publish message: %v", err)
 	}
 }
 
