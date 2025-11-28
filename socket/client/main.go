@@ -34,7 +34,7 @@ func main() {
 			if strings.HasPrefix(line, "[game.") {
 				fmt.Printf("\n [EVENT] %s\n", line)
 			} else {
-				fmt.Printf(line)
+				fmt.Printf("%s\n", line)
 			}
 			fmt.Print("> ")
 		}

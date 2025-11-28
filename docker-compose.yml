@@ -34,6 +34,8 @@ services:
       - appnet
     volumes:
       - ./data:/app/data
+      - ./pangrams.json:/app/pangrams.json
+      - ./words_dictionary.json:/app/words_dictionary.json
     depends_on:
       - rabbitmq
     restart: unless-stopped

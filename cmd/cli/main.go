@@ -4,6 +4,7 @@ import (
 	spellingbeepb "Assignment-1/api/spellingbee/v1"
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -11,6 +12,10 @@ import (
 )
 
 func main() {
+
+	wd, _ := os.Getwd()
+	fmt.Println("Working Directory:", wd)
+
 	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 	if err != nil {
 		panic(err)

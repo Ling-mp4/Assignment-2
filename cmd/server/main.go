@@ -81,7 +81,6 @@ func (s *server) SubmitWord(_ context.Context, req *spellingbeepb.SubmitWordRequ
 
 	_, score, msg := g.ValidateWord(req.GetWord())
 
-	// Publish pangram event when detected
 	if strings.Contains(msg, "Pangram!") && s.pub != nil {
 		eventMsg := fmt.Sprintf("PANGRAM %s score=%d", req.GetWord(), score)
 		s.pub.Publish("game.pangram", eventMsg)
@@ -99,11 +98,17 @@ func (s *server) SubmitWord(_ context.Context, req *spellingbeepb.SubmitWordRequ
 
 func main() {
 
-	pub, err := connectPublisherWithRetry()
-	if err != nil {
-		log.Fatal(err)
+	var pub *mq.Publisher
+
+	if os.Getenv("ENABLE_RMQ") == "1" {
+		p, err := connectPublisherWithRetry()
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			pub = p
+			defer pub.Close()
+		}
 	}
-	defer pub.Close()
 
 	s := &server{
 		mgr: manager.Get(),
