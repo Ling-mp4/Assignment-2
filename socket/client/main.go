@@ -30,7 +30,12 @@ func main() {
 				fmt.Println("\nDisconnected from server")
 				os.Exit(0)
 			}
-			fmt.Println(strings.TrimRight(line, "\n"+"\n"))
+			line = strings.TrimSpace(line)
+			if strings.HasPrefix(line, "[game.") {
+				fmt.Printf("\n [EVENT] %s\n", line)
+			} else {
+				fmt.Printf(line)
+			}
 			fmt.Print("> ")
 		}
 	}()

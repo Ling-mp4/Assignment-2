@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strings"
 	"sync"
 
@@ -14,8 +15,8 @@ import (
 	"github.com/streadway/amqp"
 )
 
-const (
-	amqpURL = "amqp://guest:guest@localhost:5672/"
+var (
+	amqpURL = os.Getenv("RABBITMQ_URL")
 	tcpAddr = ":9000"
 )
 
@@ -100,10 +101,13 @@ func main() {
 			if strings.HasPrefix(d.RoutingKey, "game.pangram") || strings.Contains(strings.ToLower(line), "pangram") {
 				parts := strings.Fields(payload)
 				word := ""
-				if len(parts) > 1 {
-					word = parts[1]
+				if len(parts) > 0 {
+					word = parts[len(parts)-1]
 				}
-				_ = store.AddPangram(word)
+				if word != "" {
+					_ = store.AddPangram(word)
+				}
+
 			}
 			broadcast(line)
 		}
@@ -121,15 +125,15 @@ func main() {
 }
 
 func handleClient(conn net.Conn, store *stats.Store) {
-	//defer conn.Close()
-	//clientsMu.Lock()
-	//client[conn] = struct{}{}
-	//clientsMu.Unlock()
-	//defer func() {
-	//	clientsMu.Lock()
-	//	delete(client, conn)
-	//	clientsMu.Unlock()
-	//}()
+	defer conn.Close()
+	clientsMu.Lock()
+	client[conn] = struct{}{}
+	clientsMu.Unlock()
+	defer func() {
+		clientsMu.Lock()
+		delete(client, conn)
+		clientsMu.Unlock()
+	}()
 	defer conn.Close()
 	r := bufio.NewReader(conn)
 	w := bufio.NewWriter(conn)
